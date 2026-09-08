@@ -1,0 +1,22 @@
+# 文本文件统一按 LF 保存，避免跨平台检出时产生无意义差异
+* text=auto
+*.m text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.csv text eol=lf
+*.html text eol=lf
+*.xml text eol=lf
+*.json text eol=lf
+
+# 课程材料和实验产物按二进制处理
+*.pdf binary
+*.docx binary
+*.pptx binary
+*.ppt binary
+*.mat binary
+*.fig binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.mp4 binary
+
