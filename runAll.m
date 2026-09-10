@@ -103,6 +103,11 @@ save(fullfile(resultsFolder, 'poisson_all_solutions.mat'), ...
     'nIntervalsList', 'xDense', 'uExactDense', 'allSolutions');
 fprintf('\n第 15 题实验完成：结果已保存到 results/，图像已保存到 figures/。\n');
 
+%% 第15题 Richardson 外推部分
+% 在 N 与 2N 网格上复用二阶有限差分求解器，并在重合节点上外推。
+% 当前阶段只输出数值结果，不生成 Richardson 外推图像。
+runRichardsonExperiment();
+
 %% 第16题部分
 fprintf('开始运行第 16 题 RK4、符号解与基础误差实验。\n');
 
@@ -157,4 +162,10 @@ save(fullfile(projectRoot, 'results', 'ode_experiment.mat'), 'out', 'ySym', 'che
 % 按方案要求使用长步长序列，输出两张误差表和两张 loglog 图。
 fprintf('开始运行第 15、16 题正式收敛实验。\n');
 runConvergenceExperiment();
-fprintf('第 16 题基础实验完成：结果已保存到 results/，图像已保存到 figures/。\n');
+fprintf('第 15、16 题正式收敛实验完成。\n');
+
+%% 第16题 Euler、RK2、RK4 横向比较
+% 使用相同步数序列比较精度和阶数，并通过函数调用次数及重复计时比较效率。
+fprintf('开始运行第 16 题 Euler、RK2、RK4 正式横向比较。\n');
+runOdeMethodComparison();
+fprintf('全部基础实验、正式收敛实验和方法比较均已完成。\n');

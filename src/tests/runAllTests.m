@@ -75,6 +75,25 @@ function runAllTests()
     assert(exactOrder > 1.7 && exactOrder < 2.3, '第15题精确解观测阶不接近2。');
     fprintf('[通过] 第15题精确解观测阶 = %.4f\n', exactOrder);
 
+    [xRichardson, uRichardson, richardsonMeta] = richardsonExtrapolatePoisson(16);
+    assert(numel(xRichardson) == 17 && numel(uRichardson) == 17, ...
+        'Richardson 外推解向量长度错误。');
+    assert(richardsonMeta.coarseN == 16 && richardsonMeta.fineN == 32, ...
+        'Richardson 粗细网格参数错误。');
+    assert(max(abs(uRichardson - poissonExact(xRichardson))) < 2e-4, ...
+        'Richardson 外推误差异常。');
+    fprintf('[通过] Richardson 外推基本检验\n');
+
+    richardsonErrors = zeros(size(nList));
+    for k = 1:numel(nList)
+        [xGrid, uGrid] = richardsonExtrapolatePoisson(nList(k));
+        richardsonErrors(k) = max(abs(uGrid - poissonExact(xGrid)));
+    end
+    [~, richardsonOrder] = computeOrder(steps, richardsonErrors);
+    assert(richardsonOrder > 3.4 && richardsonOrder < 4.6, ...
+        'Richardson 外推观测阶不接近4。');
+    fprintf('[通过] Richardson 外推观测阶 = %.4f\n', richardsonOrder);
+
     mmsErrors = zeros(size(nList));
     for k = 1:numel(nList)
         [xGrid, uGrid] = solvePoissonFD(nList(k), mmsSource, mmsBoundary, [-1, 1]);
@@ -91,9 +110,32 @@ function runAllTests()
     assert(abs(yRk(end) - yExact(3)) < 1e-5 && rkMeta.functionEvaluations == 96, 'RK4 结果异常。');
     [~, yVector, ~] = rk4Solve(@(t, y) [y(2); -y(1)], [0, 1], [1; 0], 16);
     assert(size(yVector, 2) == 2 && all(isfinite(yVector(:))), 'RK4 向量状态检查失败。');
-    [~, yEuler, ~] = eulerSolve(rhs, [0, 3], 1, 24);
-    [~, yRk2, ~] = rk2Solve(rhs, [0, 3], 1, 24);
+    [~, yEuler, eulerMeta] = eulerSolve(rhs, [0, 3], 1, 24);
+    [~, yRk2, rk2Meta] = rk2Solve(rhs, [0, 3], 1, 24);
     assert(all(isfinite([yEuler(:); yRk2(:)])), 'Euler/RK2 有限性检查失败。');
+    assert(eulerMeta.functionEvaluations == 24 && ...
+        rk2Meta.functionEvaluations == 48 && ...
+        rkMeta.functionEvaluations == 96, ...
+        'Euler/RK2/RK4 右端函数调用次数错误。');
+
+    odeN = [12, 24, 48, 96].';
+    odeH = 3 ./ odeN;
+    odeSolvers = {@eulerSolve, @rk2Solve, @rk4Solve};
+    expectedOrders = [1, 2, 4];
+    fittedOrders = zeros(size(expectedOrders));
+    for iMethod = 1:numel(odeSolvers)
+        maxErrors = zeros(size(odeN));
+        for iGrid = 1:numel(odeN)
+            [tGrid, yGrid] = odeSolvers{iMethod}(rhs, [0, 3], 1, odeN(iGrid));
+            maxErrors(iGrid) = max(abs(yGrid(:, 1) - yExact(tGrid)));
+        end
+        [~, fittedOrders(iMethod)] = computeOrder(odeH, maxErrors);
+    end
+    orderTolerances = [0.30, 0.40, 0.50];
+    assert(all(abs(fittedOrders - expectedOrders) < orderTolerances), ...
+        'Euler/RK2/RK4 拟合阶未落在理论阶附近。');
+    fprintf('[通过] Euler/RK2/RK4 函数调用次数与拟合阶检查\n');
+    fprintf('        拟合阶：Euler %.4f，RK2 %.4f，RK4 %.4f\n', fittedOrders);
     fprintf('[通过] 第16题 RK4 向量状态、符号解、Euler/RK2 基础检查\n');
     fprintf('阶段 4 至 9 核心测试全部通过。\n');
 

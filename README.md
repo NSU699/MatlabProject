@@ -30,22 +30,25 @@
 
 ## 入口与脚本索引
 
-[`runAll.m`](runAll.m) 是当前唯一总入口（仓库中没有 `runAll.md`）。它先执行 `clear; clc; close all;`，按自身位置定位仓库、配置 `src/` 路径，再依次运行 `src/tests/runAllTests.m`、第 15 题多网格对比实验、第 16 题 RK4 基础实验和两题正式收敛实验。任何测试断言失败都会中止后续实验。
+[`runAll.m`](runAll.m) 是当前唯一总入口（仓库中没有 `runAll.md`）。它先执行 `clear; clc; close all;`，按自身位置定位仓库、配置 `src/` 路径，再依次运行 `src/tests/runAllTests.m`、第 15 题多网格与 Richardson 实验、第 16 题 RK4 基础实验、两题正式收敛实验，以及 Euler/RK2/RK4 正式横向比较。任何测试断言失败都会中止后续实验。
 
-第 15 题调用 `src/poisson/solvePoissonFD.m`、`poissonExact.m`，网格为 `N = 8,16,32,64,128,256`；第 16 题调用 `src/ode/ivpExactSymbolic.m` 和 `rk4Solve.m`，步数为 `N = 6,12,24,48`。两题均通过公共工具统一样式并导出图片。具体产物见下表。
+第 15 题调用 `src/poisson/solvePoissonFD.m`、`poissonExact.m`，基础网格为 `N = 8,16,32,64,128,256`；第 16 题基础实验调用 `src/ode/ivpExactSymbolic.m` 和 `rk4Solve.m`，步数为 `N = 6,12,24,48`。三方法比较统一使用 `N = 6,12,24,48,96,192,384`。两题均通过公共工具统一样式并导出图片。具体产物见下表。
 
-原根目录 `runOdeExperiment.m` 已合并并删除；第 16 题基础实验直接在 `runAll.m` 中执行，不再调用旧脚本。`runConvergenceExperiment.m` 已接入总入口；`runPoissonAnalysis.m` 和 `runOdeFigureAnalysis.m` 是读取已保存结果的补充分析入口，目前需按需单独运行。`src/` 中现有 `.m` 文件均为函数文件，不是需要顺序手工运行的脚本。
+原根目录 `runOdeExperiment.m` 已合并并删除；第 16 题基础实验直接在 `runAll.m` 中执行，不再调用旧脚本。`runConvergenceExperiment.m`、`runRichardsonExperiment.m` 和 `runOdeMethodComparison.m` 已接入总入口；`runPoissonAnalysis.m`、`runRichardsonFigures.m` 和 `runOdeFigureAnalysis.m` 是补充分析或绘图入口，目前需按需单独运行。`src/` 中现有 `.m` 文件均为函数文件，不是需要顺序手工运行的脚本。
 
 ### `src/` 函数索引
 
 | 路径 | 作用 | 被谁调用 |
 |---|---|---|
 | `src/poisson/solvePoissonFD.m` | 泊松有限差分、边界修正、稀疏线性系统求解 | `runAll.m`、测试 |
+| `src/poisson/richardsonExtrapolatePoisson.m` | 组合 N 与 2N 网格解，输出粗网格节点上的四阶 Richardson 外推解 | `runRichardsonExperiment.m`、测试 |
+| `runRichardsonFigures.m` | 读取 Richardson 试验 CSV，生成误差收敛、观测阶和点态误差图 | 手动运行；输出 `figures/poisson_richardson_*.png/.pdf` |
+| `runOdeMethodComparison.m` | 三方法精度、阶数、函数调用次数及七次重复计时的正式比较 | `runAll.m`，也可独立运行 |
 | `src/poisson/poissonExact.m` | 第 15 题解析解 | `runAll.m`、测试 |
 | `src/poisson/poissonMMS.m` | 制造解、源项和边界值 | 测试 |
 | `src/ode/rk4Solve.m` | 向量状态经典四阶 RK4 | `runAll.m`、测试 |
-| `src/ode/eulerSolve.m` | 固定步长显式 Euler | 测试，后续方法对比 |
-| `src/ode/rk2Solve.m` | Heun 型二阶 RK | 测试，后续方法对比 |
+| `src/ode/eulerSolve.m` | 固定步长显式 Euler | `runOdeMethodComparison.m`、测试 |
+| `src/ode/rk2Solve.m` | Heun 型二阶 RK | `runOdeMethodComparison.m`、测试 |
 | `src/ode/ivpExactSymbolic.m` | `dsolve` 解析解、手推式判零、函数句柄 | `runAll.m`、测试 |
 | `src/common/applyFigureStyle.m` | 图窗白底、尺寸、宋体、字号和网格等统一样式 | 两题实验和测试 |
 | `src/common/errorNorms.m` | 最大绝对误差、误差二范数、均方根误差 | 测试、正式收敛实验 |
@@ -53,7 +56,7 @@
 | `src/common/exportFigure.m` | 同时导出 300 dpi PNG 与矢量 PDF | 两题实验和测试 |
 | `src/tests/runAllTests.m` | 项目基础验收测试，无输出参数 | `runAll.m` |
 
-表中“测试”均指 `runAllTests.m`。Euler、RK2 目前只有基础测试，尚未接入正式方法比较；打靶法尚未实现。ODE 文件内的 `prepareOdeGrid`、`checkedOdeSlope` 等局部函数只供所在文件内部使用，无须另建或单独运行。
+表中“测试”均指 `runAllTests.m`。Euler、RK2、RK4 已完成函数调用次数、拟合阶和正式横向比较；打靶法尚未实现。ODE 文件内的 `prepareOdeGrid`、`checkedOdeSlope` 等局部函数只供所在文件内部使用，无须另建或单独运行。
 
 ### 核心接口与数据约定
 
@@ -95,7 +98,10 @@ runAllTests()
 | `figures/poisson_compare_nNNN.*`、`poisson_grid_convergence.*` | `runAll.m` | 单网格及多网格数值解与解析解对比；多网格总览不是误差收敛图 |
 | `results/ode_experiment.mat`、`figures/ode_rk4_basic.*` | `runAll.m` | RK4 基础实验、符号解析解检查和逐节点绝对误差 |
 | `results/poisson_convergence.csv`、`results/ode_convergence.csv` | `runConvergenceExperiment.m`（已接入 `runAll.m`） | 两题长步长序列的最大误差、RMS 误差、相邻阶、拟合阶和 `timeit` 耗时 |
+| `results/poisson_richardson_summary.csv`、`results/poisson_richardson_experiment.mat` | `runRichardsonExperiment.m`（已接入 `runAll.m`） | 第15题二阶有限差分与 Richardson 外推的误差、观测阶和逐网格完整结果；当前不绘图 |
+| `results/ode_method_comparison.csv`、`ode_method_timing_raw.csv`、`ode_method_comparison.mat` | `runOdeMethodComparison.m`（已接入 `runAll.m`） | 三方法 21 组精度/阶数/工作量汇总、147 个原始计时样本和环境信息 |
 | `figures/poisson_convergence_formal.*`、`ode_rk4_convergence_formal.*` | `runConvergenceExperiment.m`（已接入 `runAll.m`） | 两题双对数误差图及理论阶参考线 |
+| `figures/ode_methods_convergence.*`、`ode_methods_work_precision.*`、`ode_methods_runtime_precision.*`、`ode_methods_timing_variability.*` | `runOdeMethodComparison.m`（已接入 `runAll.m`） | 三方法收敛阶、函数调用次数工作量、实测时间—精度和计时波动图 |
 | `results/poisson_analysis_summary.csv`、`figures/poisson_solution_panels.png`、`poisson_error_convergence.png`、`poisson_pointwise_error.png`、`poisson_residuals.png` | `runPoissonAnalysis.m` | 第 15 题全局误差、加权离散 L2 误差、代数残差、截断残差、条件数估计及分析图 |
 | `figures/ode_rk4_solution_comparison.*`、`ode_rk4_signed_error.*`、`ode_rk4_scaled_error.*`、`ode_rk4_convergence.*`、`ode_rk4_observed_order.*`、`ode_rk4_work_precision.*` | `runOdeFigureAnalysis.m` | 第 16 题解对比、有符号误差、四阶归一化误差、收敛阶和函数调用次数工作量分析 |
 
@@ -109,7 +115,7 @@ runAllTests()
 - 根目录两份课程 PDF 是题目、验收要求的只读来源；`报告/` 中的 DOCX 模板是后续正式报告基础。本次未改动或重新审阅这些 PDF/DOCX。
 - `Reference/` 保存参考教材，`ppt/` 尚无正式汇报材料；参考资料、历史方案和临时文件都不能代替脚本结果。
 
-## 当前进度（截至 2026-09-09）
+## 当前进度（截至 2026-09-10）
 
 ### 今日工作总结
 
@@ -118,9 +124,10 @@ runAllTests()
 - 完成第 16 题固定步长 Euler、RK2、经典 RK4 和符号解析解函数；已生成 RK4 基础结果及六类补充分析图。
 - 扩充公共误差、观测阶、绘图和导出工具及验收测试，并把两题基础实验与正式收敛实验接入 `runAll.m`。
 - 完成两题正式收敛 CSV 与双对数图。当前 CSV 记录的最大误差拟合阶分别为 `2.002502`（有限差分）和 `4.036671`（RK4），与理论二阶、四阶一致。
+- 完成 Euler/RK2/RK4 正式横向比较。最大误差拟合阶为 `1.018057`、`2.046956`、`4.036671`；每个方法和步数组合进行了 7 次独立 `timeit`，原始值与汇总统计均已保存。
 - 整理手工推导 MD/PDF、参考教材、统一约定和项目索引；原 `src/README.md` 的有效内容已迁入本文。
 
-总体判断：两题核心算法、基础验证、单次实验和正式收敛实验已形成可复核闭环；Euler/RK2/RK4 的正式横向效率比较、打靶法、报告、PPT、视频和最终提交验收仍未完成。阶段编号沿用开题方案，按当前文件与结果逐项记录如下。
+总体判断：两题核心算法、基础验证、单次实验、正式收敛实验和 Euler/RK2/RK4 横向比较已形成可复核闭环；打靶法、报告、PPT、视频和最终提交验收仍未完成。阶段编号沿用开题方案，按当前文件与结果逐项记录如下。
 
 | 阶段 | 当前状态 | 对应依据或待补项 |
 |---|---|---|
@@ -130,22 +137,22 @@ runAllTests()
 | 4. 公共层 | 已实现，现有测试通过 | 四个 `src/common/` 工具 |
 | 5. 第 15 题核心 | 已实现并验证 | 稀疏中心差分、边界修正与求解已测；`runPoissonAnalysis.m` 已独立计算解析解代入差分算子的截断残差及其观测阶 |
 | 6. 第 15 题验证 | 现有验证通过 | `poissonExact`、`poissonMMS`；测试包含两类最大误差的二阶拟合检查 |
-| 7. 第 16 题核心 | 已实现，基础测试通过 | 自编 RK4/Euler/RK2；RK4 标量、向量状态检查；未用 `ode45` 替代 |
+| 7. 第 16 题核心 | 已实现并通过当前验收 | 自编 RK4/Euler/RK2；函数调用次数和拟合阶已测；未用 `ode45` 替代 |
 | 8. 第 16 题符号解 | 已实现，符号检验通过 | `ivpExactSymbolic` 三项判零 |
 | 9. 单次实验 | 已完成，视觉验收待补 | 两题基础产物、泊松点态误差图和 RK4 多类误差分析图均已存在；尚未逐张完成视觉检查 |
 | 10. 收敛实验 | 已完成 | 两题各 7 级步长序列、误差 CSV、比值法/拟合法双估阶、`timeit` 耗时及带理论参考线的 `loglog` 图均已生成 |
 | 11. U 形曲线 | 暂缓 | 舍入平台问题先搁置，待与指导老师商议；若后续保留，考虑放在论文偏后部分作为补充分析。已有 `meta.conditionEstimate`，相关实验目前不纳入近期实施范围 |
 | 12. 稳定域实验 | 暂缓 | 稳定域问题先搁置，待与指导老师商议后再决定是否开展；在本人明确说明前，不纳入论文内容 |
-| 13. 阶数与效率 | 部分完成 | RK4 已有观测阶、`timeit` 数据和按函数调用次数绘制的 work–precision 图；Euler/RK2/RK4 正式横向比较及重复计时仍待完成 |
+| 13. 阶数与效率 | 已完成 | 三方法统一使用 7 级步数，拟合阶分别为 `1.018057`、`2.046956`、`4.036671`；保存函数调用次数、7 次重复 `timeit` 原始值/汇总表及四组 PNG/PDF 图 |
 | 14. 打靶法 | 待实现 | 复用向量 RK4，并与有限差分和解析解交叉验证 |
 | 15. 结果解释 | 待完成 | 基于实际实验数据撰写误差、收益、代价和局限分析 |
 | 16. 整理成果 | 部分基础已有 | 总入口与基础图/数据导出已有；全部扩展实验的可复现打包仍待完成 |
 | 17. 报告与 PPT | 待完成 | 已有模板/方案/推导，不等于正式结题报告与汇报 PPT |
 | 18. 视频与验收 | 待完成 | 视频、彩排、提交包和最终验收 |
 
-验证记录：2026-09-09 在 MATLAB `26.1.0.3346908 (R2026a) Update 5` 实际运行 `runAllTests()`，现有断言均通过，包括公共工具、泊松解析解/MMS 观测阶及 ODE/符号解基础检查。仓库中同日生成的 MAT、CSV、PNG/PDF 产物与上述脚本相对应；本次 README 整理没有重新运行 MATLAB，也没有逐张完成全部图像的视觉检查。测试中的数值输出不直接抄入报告；正式实验数值须先保存到 `results/`。
+验证记录：2026-09-10 在 MATLAB `26.1 (R2026a)`、`PCWIN64` 上实际运行完整 `runAll.m`，公共工具、泊松/MMS/Richardson、ODE 符号解、三方法调用次数和拟合阶断言均通过，随后成功生成横向比较的 MAT、CSV、PNG/PDF。四张 `ode_methods_*` PNG 已逐张检查白底黑字、图例、端点留白和数据可辨识性。短步数算例为微秒级任务，最终结果中最高计时变异系数约为 `15.5%`；因此函数调用次数是更稳定的工作量指标，运行时间只代表本机本次会话。测试输出不直接抄入报告；正式实验数值须先保存到 `results/`。
 
-注意：测试输出中的“第 15 题三种残差”是线性系统残差、数值解的差分方程残差和边界残差；独立的局部截断残差与全局误差分析见 `runPoissonAnalysis.m` 及其 CSV。RK4 正式四阶收敛实验已完成，但 Euler/RK2/RK4 的横向阶数与效率验收仍留在后续阶段。
+注意：测试输出中的“第 15 题三种残差”是线性系统残差、数值解的差分方程残差和边界残差；独立的局部截断残差与全局误差分析见 `runPoissonAnalysis.m` 及其 CSV。三方法横向比较把“相同步长精度”“相同函数调用次数”和“本机实测时间”分开呈现，不能把单次或最粗网格计时解释为普遍性能结论。
 
 稳定域问题备注：相关分析暂时搁置，待本人和指导老师商议后再决定后续安排。未经本人明确说明，论文中不得出现稳定域相关内容。
 
