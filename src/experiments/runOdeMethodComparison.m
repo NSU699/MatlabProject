@@ -10,11 +10,8 @@ function runOdeMethodComparison()
 %       results/ode_method_timing_raw.csv
 %       results/ode_method_comparison.mat
 %       figures/ode_methods_*.png/.pdf
-%
-%   对应报告: 第16题阶数与效率横向比较
-%   作者: 项目成员   日期: 2026-09-10
 
-    projectRoot = fileparts(mfilename('fullpath'));
+    projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
     addpath(genpath(fullfile(projectRoot, 'src')));
     resultsFolder = fullfile(projectRoot, 'results');
     figuresFolder = fullfile(projectRoot, 'figures');

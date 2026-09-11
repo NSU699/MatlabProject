@@ -8,7 +8,7 @@ function runConvergenceExperiment()
     close all;
     clc;
 
-    projectRoot = fileparts(mfilename('fullpath'));
+    projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
     addpath(genpath(fullfile(projectRoot, 'src')));
     resultsFolder = fullfile(projectRoot, 'results');
     figuresFolder = fullfile(projectRoot, 'figures');

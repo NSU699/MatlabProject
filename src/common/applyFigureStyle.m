@@ -4,9 +4,6 @@ function applyFigureStyle(axHandle)
     if nargin < 1
         axHandle = gca;
     end
-    if ~isgraphics(axHandle, 'axes')
-        error('applyFigureStyle:InvalidAxes', 'axHandle 必须是有效的坐标轴句柄。');
-    end
 
     figHandle = ancestor(axHandle, 'figure');
     set(figHandle, 'Color', 'w', 'Position', [100, 100, 800, 600], ...

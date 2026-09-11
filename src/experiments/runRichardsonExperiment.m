@@ -7,7 +7,7 @@ function runRichardsonExperiment()
 %   对应报告: 第15题 Richardson 外推算法延伸
 %   作者: 项目成员   日期: 2026-09-10
 
-    projectRoot = fileparts(mfilename('fullpath'));
+    projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
     addpath(genpath(fullfile(projectRoot, 'src')));
 
     nIntervalsList = [8, 16, 32, 64, 128, 256];

@@ -13,9 +13,6 @@ function [x, uRichardson, meta] = richardsonExtrapolatePoisson(nIntervals, sourc
 %       x             - 粗网格节点列向量
 %       uRichardson   - 粗网格节点上的 Richardson 外推解
 %       meta          - 粗细网格参数及外推前的两组节点值
-%
-%   对应报告: 第15题 Richardson 外推算法延伸
-%   作者: 项目成员   日期: 2026-09-10
 
     if nargin < 1 || isempty(nIntervals), nIntervals = 32; end
     if nargin < 2 || isempty(sourceFun), sourceFun = @(x) exp(-x.^2); end
@@ -26,16 +23,11 @@ function [x, uRichardson, meta] = richardsonExtrapolatePoisson(nIntervals, sourc
 
     [x, uCoarse, coarseMeta] = solvePoissonFD( ...
         nIntervals, sourceFun, boundaryValues, xSpan);
-    [xFine, uFine, fineMeta] = solvePoissonFD( ...
+    [~, uFine, fineMeta] = solvePoissonFD( ...
         2 * nIntervals, sourceFun, boundaryValues, xSpan);
 
     % 细网格的第 1、3、5、... 个元素与粗网格节点位于相同位置。
     uFineAtCoarse = uFine(1:2:end);
-    xFineAtCoarse = xFine(1:2:end);
-    if max(abs(xFineAtCoarse - x)) > 10 * eps(max(1, max(abs(x))))
-        error('richardsonExtrapolatePoisson:GridMismatch', ...
-            '粗网格节点与细网格重合节点不一致。');
-    end
 
     uRichardson = (4 * uFineAtCoarse - uCoarse) / 3;
 

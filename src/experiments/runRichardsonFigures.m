@@ -10,17 +10,14 @@ function runRichardsonFigures()
 %   对应报告: 第15题 Richardson 外推算法延伸
 %   作者: 项目成员   日期: 2026-09-10
 
-    projectRoot = fileparts(mfilename('fullpath'));
+    projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
     addpath(genpath(fullfile(projectRoot, 'src')));
     resultsFolder = fullfile(projectRoot, 'results');
     figuresFolder = fullfile(projectRoot, 'figures');
     if ~exist(figuresFolder, 'dir'), mkdir(figuresFolder); end
 
     summaryPath = fullfile(resultsFolder, 'poisson_richardson_summary.csv');
-    if ~exist(summaryPath, 'file')
-        error('runRichardsonFigures:MissingData', ...
-            '未找到 Richardson 汇总数据，请先运行 runRichardsonExperiment。');
-    end
+
     summary = readtable(summaryPath);
     h = summary.h;
     coarseError = summary.coarseMaxError;

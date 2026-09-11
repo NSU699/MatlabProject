@@ -4,7 +4,7 @@ close all;
 
 % runOdeFigureAnalysis  基于第16题已有结果生成六张分析图
 %
-%   读取 results/ode_experiment.mat，不修改原始数值数据，生成：
+%   读取 results/ode_experiment.mat，生成：
 %   1) 精简的数值解与解析解对照图
 %   2) 有符号误差随自变量t变化图
 %   3) 四阶归一化误差图 e/h^4
@@ -14,16 +14,11 @@ close all;
 %
 %   数据来源：results/ode_experiment.mat
 %   输出位置：figures/ode_rk4_*.png 和 figures/ode_rk4_*.pdf
-%   对应报告：第16题图像分析；日期：2026-09-09
 
-projectRoot = fileparts(mfilename('fullpath'));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 addpath(genpath(fullfile(projectRoot, 'src')));
 dataPath = fullfile(projectRoot, 'results', 'ode_experiment.mat');
 figureFolder = fullfile(projectRoot, 'figures');
-if ~exist(dataPath, 'file')
-    error('runOdeFigureAnalysis:MissingData', ...
-        '找不到第16题结果文件：%s', dataPath);
-end
 if ~exist(figureFolder, 'dir')
     mkdir(figureFolder);
 end

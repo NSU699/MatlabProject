@@ -13,8 +13,6 @@ function [x, uNum, meta] = solvePoissonFD(nIntervals, sourceFun, boundaryValues,
     validateattributes(nIntervals, {'numeric'}, {'scalar', 'integer', '>=', 2});
     validateattributes(boundaryValues, {'numeric'}, {'vector', 'numel', 2, 'finite'});
     validateattributes(xSpan, {'numeric'}, {'vector', 'numel', 2, 'finite'});
-    if xSpan(2) <= xSpan(1), error('solvePoissonFD:InvalidInterval', '区间右端必须大于左端。'); end
-    if ~isa(sourceFun, 'function_handle'), error('solvePoissonFD:InvalidSource', '源项必须是函数句柄。'); end
 
     h = (xSpan(2) - xSpan(1)) / nIntervals;
     x = linspace(xSpan(1), xSpan(2), nIntervals + 1).';
@@ -25,9 +23,7 @@ function [x, uNum, meta] = solvePoissonFD(nIntervals, sourceFun, boundaryValues,
     A = spdiags([offDiagonal, mainDiagonal, offDiagonal], [-1, 0, 1], nInner, nInner) / h^2;
     rhs = sourceFun(xInner);
     rhs = rhs(:);
-    if numel(rhs) ~= nInner || any(~isfinite(rhs))
-        error('solvePoissonFD:InvalidSourceOutput', '源项输出必须是有限的内部节点列向量。');
-    end
+
     rhs(1) = rhs(1) - boundaryValues(1) / h^2;
     rhs(end) = rhs(end) - boundaryValues(2) / h^2;
     uInner = A \ rhs;

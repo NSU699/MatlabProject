@@ -105,7 +105,7 @@ function runAllTests()
     [ySym, yExact, symbolicCheck] = ivpExactSymbolic(); %#ok<ASGLU>
     assert(symbolicCheck.passed, '符号解判零失败。');
     rhs = @(t, y) -y + t.^2 + 3;
-    [tRk, yRk, rkMeta] = rk4Solve(rhs, [0, 3], 1, 24);
+    [~, yRk, rkMeta] = rk4Solve(rhs, [0, 3], 1, 24);
     assert(abs(yRk(1) - 1) < 1e-14 && all(isfinite(yRk(:))), 'RK4 初值或有限性检查失败。');
     assert(abs(yRk(end) - yExact(3)) < 1e-5 && rkMeta.functionEvaluations == 96, 'RK4 结果异常。');
     [~, yVector, ~] = rk4Solve(@(t, y) [y(2); -y(1)], [0, 1], [1; 0], 16);
@@ -137,6 +137,28 @@ function runAllTests()
     fprintf('[通过] Euler/RK2/RK4 函数调用次数与拟合阶检查\n');
     fprintf('        拟合阶：Euler %.4f，RK2 %.4f，RK4 %.4f\n', fittedOrders);
     fprintf('[通过] 第16题 RK4 向量状态、符号解、Euler/RK2 基础检查\n');
+
+    %% 打靶法基础检查
+    [xShoot, uShoot, shootingMeta] = solvePoissonShooting(16);
+    assert(numel(xShoot) == 17 && numel(uShoot) == 17, ...
+        '打靶法解向量长度错误。');
+    assert(all(isfinite(uShoot)), '打靶法数值解出现 NaN/Inf。');
+    assert(abs(uShoot(1)) < 1e-13 && abs(uShoot(end)) < 1e-13, ...
+        '打靶法边界条件未满足。');
+    assert(shootingMeta.functionEvaluations == 64, ...
+        '打靶法 RK4 函数调用次数错误。');
+    shootingN = [8, 16, 32, 64].';
+    shootingH = zeros(size(shootingN));
+    shootingErrors = zeros(size(shootingN));
+    for k = 1:numel(shootingN)
+        [xGrid, uGrid, gridMeta] = solvePoissonShooting(shootingN(k));
+        shootingH(k) = gridMeta.stepSize;
+        shootingErrors(k) = max(abs(uGrid - poissonExact(xGrid)));
+    end
+    [~, shootingOrder] = computeOrder(shootingH, shootingErrors);
+    assert(shootingOrder > 3.4 && shootingOrder < 4.6, ...
+        '打靶法拟合阶未落在四阶附近。');
+    fprintf('[通过] 打靶法边界、调用次数与四阶收敛检查\n');
     fprintf('阶段 4 至 9 核心测试全部通过。\n');
 
 end

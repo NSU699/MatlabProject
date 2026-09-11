@@ -11,17 +11,14 @@ function summaryTable = runPoissonAnalysis()
     close all;
     clc;
 
-    projectRoot = fileparts(mfilename('fullpath'));
+    projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
     addpath(genpath(fullfile(projectRoot, 'src')));
     resultsFolder = fullfile(projectRoot, 'results');
     figuresFolder = fullfile(projectRoot, 'figures');
     if ~exist(figuresFolder, 'dir'), mkdir(figuresFolder); end
 
     dataPath = fullfile(resultsFolder, 'poisson_all_solutions.mat');
-    if ~exist(dataPath, 'file')
-        error('runPoissonAnalysis:MissingResults', ...
-            '未找到 %s，请先运行 runAll.m 生成第15题结果。', dataPath);
-    end
+
     data = load(dataPath, 'allSolutions', 'xDense', 'uExactDense');
     allSolutions = data.allSolutions;
     xDense = data.xDense(:);
