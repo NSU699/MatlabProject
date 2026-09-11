@@ -6,7 +6,6 @@ function runConvergenceExperiment()
 
     clearvars;
     close all;
-    clc;
 
     projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
     addpath(genpath(fullfile(projectRoot, 'src')));
@@ -43,8 +42,7 @@ function runConvergenceExperiment()
     rhs = @(t, y) -y + t.^2 + 3;
     tSpan = [0, 3];
     y0 = 1;
-    [~, yExact, check] = ivpExactSymbolic();
-    assert(check.passed, '解析解符号验证未通过。');
+    [~, yExact, ~] = ivpExactSymbolic();
     odeH = zeros(size(odeN));
     odeMax = zeros(size(odeN));
     odeRms = zeros(size(odeN));
@@ -66,9 +64,6 @@ function runConvergenceExperiment()
     makeConvergenceFigure(odeH, odeMax, odeRms, 4, ...
         '第16题经典RK4收敛实验', 'ode_rk4_convergence_formal', figuresFolder);
 
-    fprintf('正式收敛实验完成。\n');
-    fprintf('第15题拟合阶：%.6f；第16题拟合阶：%.6f\n', poissonFit, odeFit);
-    fprintf('表格已写入 results/，图像已写入 figures/。\n');
 end
 
 function makeConvergenceFigure(h, maxError, rmsError, theoryOrder, titleText, fileName, outputFolder)

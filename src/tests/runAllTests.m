@@ -1,12 +1,4 @@
 function runAllTests()
-% runAllTests  运行阶段 4 公共工具层的基础测试
-%
-%   runAllTests()
-%   当前阶段验证公共层接口；后续实现第 15、16 题算法后，在本入口中
-%   继续加入差分格式、RK4、制造解、稳定性和打靶法测试。
-%
-%   对应项目阶段: 第 4 阶段
-%   作者: 项目成员   日期: 2026-09-08
 
     testsRoot = fileparts(mfilename('fullpath'));
     projectRoot = fileparts(fileparts(testsRoot));

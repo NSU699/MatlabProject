@@ -20,7 +20,6 @@ function runRichardsonExperiment()
     richardsonMaxErrors = zeros(nCases, 1);
     allRichardsonSolutions = cell(nCases, 1);
 
-    fprintf('\n开始运行第15题 Richardson 外推实验。\n');
     for iGrid = 1:nCases
         nIntervals = nIntervalsList(iGrid);
         [x, uRichardson, meta] = richardsonExtrapolatePoisson(nIntervals);
@@ -75,8 +74,4 @@ function runRichardsonExperiment()
         'richardsonPairwiseOrder', 'coarseFittedOrder', ...
         'richardsonFittedOrder', 'summaryTable', 'allRichardsonSolutions');
 
-    disp(summaryTable);
-    fprintf('二阶有限差分拟合阶：%.6f\n', coarseFittedOrder);
-    fprintf('Richardson 外推拟合阶：%.6f\n', richardsonFittedOrder);
-    fprintf('Richardson 外推结果已保存到 results/，本实验未生成图像。\n');
 end

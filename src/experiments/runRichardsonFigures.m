@@ -189,6 +189,4 @@ function runRichardsonFigures()
     applyFigureStyle(ax);
     exportFigure(fig, fullfile(figuresFolder, 'poisson_richardson_pointwise_n256'));
     close(fig);
-
-    fprintf('Richardson 七张图已保存到 figures/。\n');
 end

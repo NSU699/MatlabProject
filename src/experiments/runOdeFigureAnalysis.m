@@ -1,5 +1,4 @@
 clear;
-clc;
 close all;
 
 % runOdeFigureAnalysis  基于第16题已有结果生成六张分析图
@@ -156,10 +155,6 @@ xlabel(ax, '右端函数调用次数（工作量指标）'); ylabel(ax, '最大�
 title(ax, 'RK4 工作量—精度关系');
 legend(ax, 'Location', 'southwest', 'Box', 'off');
 applyProjectFigureStyle(ax, [8.0, 5.2]); exportFigure(fig, fullfile(figureFolder, 'ode_rk4_work_precision')); close(fig);
-
-fprintf('第16题六张分析图已生成到：%s\n', figureFolder);
-fprintf('最大误差拟合阶：%.6f；RMS误差拟合阶：%.6f\n', fitMax(1), fitRms(1));
-fprintf('最大误差逐级观测阶：'); fprintf(' %.6f', orderMax); fprintf('\n');
 
 function fig = newFigure(sizeInches)
     fig = figure('Visible', 'off', 'Color', 'w', ...

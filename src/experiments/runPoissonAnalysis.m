@@ -9,7 +9,6 @@ function summaryTable = runPoissonAnalysis()
 
     clearvars -except summaryTable;
     close all;
-    clc;
 
     projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
     addpath(genpath(fullfile(projectRoot, 'src')));
@@ -178,7 +177,6 @@ function summaryTable = runPoissonAnalysis()
     exportPng(fig, fullfile(figuresFolder, 'poisson_residuals'));
     close(fig);
 
-    fprintf('第15题分析完成：summary CSV 和 4 张 PNG 已保存到 results/ 与 figures/。\n');
 end
 
 function [sortedValues, order] = sortRows(values)

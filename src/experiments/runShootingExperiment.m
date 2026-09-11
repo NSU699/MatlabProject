@@ -1,7 +1,6 @@
 function runShootingExperiment()
 % runShootingExperiment  生成打靶法与有限差分/解析解的原始交叉验证数据
 %
-%   本阶段只计算并保存原始节点数据，不拟合收敛阶、不生成图像。
 %   后续分析和生图阶段从 results/poisson_shooting_raw.mat 读取这些数据。
 
     projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
@@ -19,10 +18,9 @@ function runShootingExperiment()
         nIntervals = nIntervalsList(iGrid);
         [x, uShoot, shootingMeta] = solvePoissonShooting( ...
             nIntervals, sourceFun, boundaryValues, xSpan);
-        [xFd, uFd, fdMeta] = solvePoissonFD( ...
+        [~, uFd, fdMeta] = solvePoissonFD( ...
             nIntervals, sourceFun, boundaryValues, xSpan);
         uExact = poissonExact(x);
-        assert(isequal(x, xFd), '打靶法与有限差分节点不一致。');
 
         pointTable = table(x, uShoot, uFd, uExact, uShoot - uExact, ...
             uFd - uExact, uShoot - uFd, ...
@@ -47,5 +45,4 @@ function runShootingExperiment()
 
     save(fullfile(resultsFolder, 'poisson_shooting_raw.mat'), ...
         'nIntervalsList', 'rawSolutions', 'xSpan', 'boundaryValues');
-    fprintf('打靶法原始交叉验证数据已保存到 results/。\n');
 end

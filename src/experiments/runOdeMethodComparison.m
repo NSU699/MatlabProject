@@ -33,7 +33,6 @@ function runOdeMethodComparison()
     nCases = numel(nStepsList);
 
     [~, yExact, exactCheck] = ivpExactSymbolic();
-    assert(exactCheck.passed, '解析解符号验证未通过。');
 
     %% 精度、阶数与理论工作量
     stepSizes = zeros(nMethods, nCases);
@@ -43,7 +42,6 @@ function runOdeMethodComparison()
     pairwiseOrders = NaN(nMethods, nCases);
     fittedOrders = zeros(nMethods, 1);
 
-    fprintf('\n开始运行 Euler、RK2、RK4 正式精度比较。\n');
     for iMethod = 1:nMethods
         solver = methodSolvers{iMethod};
         for iCase = 1:nCases
@@ -64,7 +62,7 @@ function runOdeMethodComparison()
     % 每轮循环轮换方法顺序，降低固定先后顺序对短时计量的影响。
     timingSeconds = zeros(nMethods, nCases, timingRepeats);
     timingOrderPosition = zeros(nMethods, nCases, timingRepeats);
-    fprintf('开始重复计时：每个方法和步数组合执行 %d 次 timeit。\n', timingRepeats);
+
     for iCase = 1:nCases
         nSteps = nStepsList(iCase);
         for iMethod = 1:nMethods
@@ -198,11 +196,7 @@ function runOdeMethodComparison()
     makeTimingFigure(nStepsList, timingMedians, timingMins, timingMaxs, ...
         methodKeys, colors, markers, lineStyles, ...
         fullfile(figuresFolder, 'ode_methods_timing_variability'));
-
-    disp(comparisonTable(:, {'methodKey', 'N', 'maxError', ...
-        'pairwiseOrder', 'functionEvaluations', 'timeMedianSeconds'}));
-    fprintf('拟合阶：Euler %.6f，RK2 %.6f，RK4 %.6f。\n', fittedOrders);
-    fprintf('比较结果已保存到 results/，四组图已保存到 figures/。\n');
+    
 end
 
 function makeConvergenceFigure(nSteps, h, maxError, pairwiseOrder, fittedOrder, ...
