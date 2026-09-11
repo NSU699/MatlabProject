@@ -10,9 +10,6 @@ close all;
 %   4) 最大误差与 RMS 误差的双对数收敛图
 %   5) 逐级观测收敛阶图
 %   6) 函数调用次数与误差的工作量-精度图
-%
-%   数据来源：results/ode_experiment.mat
-%   输出位置：figures/ode_rk4_*.png 和 figures/ode_rk4_*.pdf
 
 projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 addpath(genpath(fullfile(projectRoot, 'src')));

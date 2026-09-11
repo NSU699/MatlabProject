@@ -75,9 +75,9 @@ function makeConvergenceFigure(h, maxError, rmsError, theoryOrder, titleText, fi
     loglog(ax, h, rmsError, 's--', 'LineWidth', 1.4, 'MarkerFaceColor', [0.85 0.325 0.098], ...
         'DisplayName', 'RMS误差');
     reference = maxError(1) * (h / h(1)).^theoryOrder;
-    loglog(ax, h, reference, 'k:', 'LineWidth', 1.2, ...
+    loglog(ax, h, reference, 'k:', 'LineWidth', 0.7, ...
         'DisplayName', sprintf('O(h^{%d})参考线', theoryOrder));
-    % 显式锁定双对数坐标，并把每个实际步长作为刻度，避免导出时看起来像线性坐标。
+    % 双对数坐标
     set(ax, 'XScale', 'log', 'YScale', 'log', 'XDir', 'reverse');
     xticks(ax, sort(h));
     xlabel(ax, '步长 h'); ylabel(ax, '误差'); title(ax, titleText);

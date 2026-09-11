@@ -67,6 +67,7 @@ function runCoreExperiments()
     hold(ax, 'off');
     xlabel(ax, 'x'); ylabel(ax, 'u(x)');
     title(ax, '不同网格下有限差分数值解与解析解');
+    ylim(ax, [-0.45, 0.1]);
     legend(ax, 'Location', 'best');
     applyFigureStyle(ax);
     exportFigure(fig, fullfile(figuresFolder, 'poisson_grid_convergence'));
