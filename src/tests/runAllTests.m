@@ -24,7 +24,7 @@ function runAllTests()
 
     figHandle = figure('Visible', 'off');
     axHandle = axes('Parent', figHandle);
-    plot(axHandle, 0:1, 0:1, 'LineWidth', 1.5);
+    plot(axHandle, 0:1, 0:1, 'Color', '#354E68', 'LineWidth', 1.5);
     applyFigureStyle(axHandle);
     assert(strcmp(get(axHandle, 'FontName'), '宋体'), '中文字体设置错误。');
     fprintf('[通过] applyFigureStyle\n');

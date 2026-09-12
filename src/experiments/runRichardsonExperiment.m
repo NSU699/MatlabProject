@@ -2,10 +2,8 @@ function runRichardsonExperiment()
 % runRichardsonExperiment  输出第15题 Richardson 外推数值结果
 %
 %   在多组粗细网格上计算二阶有限差分解和 Richardson 外推解，输出
-%   逐点 CSV、收敛汇总 CSV 与完整 MAT 数据。本入口暂不绘图。
-%
-%   对应报告: 第15题 Richardson 外推算法延伸
-%   作者: 项目成员   日期: 2026-09-10
+%   逐点 CSV、收敛汇总 CSV 与完整 MAT 数据。
+
 
     projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
     addpath(genpath(fullfile(projectRoot, 'src')));

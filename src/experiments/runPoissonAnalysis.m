@@ -84,7 +84,7 @@ function summaryTable = runPoissonAnalysis()
         k = selected(j);
         solution = allSolutions{order(k)};
         nexttile;
-        plot(solution.x, solution.uNum, 'o-', 'Color', [0.12, 0.47, 0.71], ...
+        plot(solution.x, solution.uNum, 'o-', 'Color', '#354E68', ...
             'LineWidth', 1.0, 'MarkerSize', 3.5, 'DisplayName', '有限差分数值解');
         hold on;
         plot(xDense, uExactDense, 'k-', 'LineWidth', 1.7, ...
@@ -104,12 +104,12 @@ function summaryTable = runPoissonAnalysis()
     % 图2：误差范数及二阶参考线。
     fig = figure('Visible', 'off', 'Color', 'w', 'Position', [100, 100, 900, 650]);
     ax = axes(fig);
-    loglog(stepSize, maxError, 'o-', 'LineWidth', 1.5, 'MarkerSize', 6, ...
+    loglog(stepSize, maxError, 'o-', 'Color', '#3B9D9A', 'LineWidth', 1.5, 'MarkerSize', 6, ...
         'DisplayName', '最大误差');
     hold on;
-    loglog(stepSize, rmsError, 's-', 'LineWidth', 1.5, 'MarkerSize', 6, ...
+    loglog(stepSize, rmsError, 's-', 'Color', '#354E68', 'LineWidth', 1.5, 'MarkerSize', 6, ...
         'DisplayName', 'RMS误差');
-    loglog(stepSize, weightedL2Error, '^-', 'LineWidth', 1.5, 'MarkerSize', 6, ...
+    loglog(stepSize, weightedL2Error, '^-', 'Color', '#9B7D40', 'LineWidth', 1.5, 'MarkerSize', 6, ...
         'DisplayName', '加权离散L2误差');
     reference = maxError(1) * (stepSize / stepSize(1)).^2;
     loglog(stepSize, reference, 'k--', 'LineWidth', 1.2, 'DisplayName', 'O(h^2)参考线');
@@ -128,7 +128,7 @@ function summaryTable = runPoissonAnalysis()
     % 图3：点态误差，使用四个代表性网格。
     fig = figure('Visible', 'off', 'Color', 'w', 'Position', [100, 100, 900, 650]);
     ax = axes(fig);
-    colors = lines(numel(selected));
+    colors = ['#354E68'; '#3B9D9A'; '#9B7D40'; '#80648F'; '#B9674F'; '#89949E'];
     hold(ax, 'on');
     for j = 1:numel(selected)
         k = selected(j);
@@ -153,14 +153,14 @@ function summaryTable = runPoissonAnalysis()
     fig = figure('Visible', 'off', 'Color', 'w', 'Position', [100, 100, 900, 700]);
     tiledlayout(2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
     nexttile;
-    semilogy(nIntervals, algebraicResidual, 'o-', 'LineWidth', 1.5, 'MarkerSize', 6);
+    semilogy(nIntervals, algebraicResidual, 'o-', 'Color', '#354E68', 'LineWidth', 1.5, 'MarkerSize', 6);
     xlabel('区间数 N'); ylabel('||Au-b||_\infty');
     title('线性方程组代数残差');
     applyFigureStyle(gca);
     set(gca, 'Color', 'w', 'XColor', 'k', 'YColor', 'k', ...
         'GridColor', [0.82, 0.82, 0.82]);
     nexttile;
-    loglog(stepSize, truncationResidual, 'o-', 'LineWidth', 1.5, 'MarkerSize', 6, ...
+    loglog(stepSize, truncationResidual, 'o-', 'Color', '#354E68', 'LineWidth', 1.5, 'MarkerSize', 6, ...
         'DisplayName', '截断残差');
     hold on;
     truncReference = truncationResidual(1) * (stepSize / stepSize(1)).^2;

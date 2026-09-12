@@ -39,10 +39,10 @@ function runCoreExperiments()
             'Visible', 'off');
         ax = axes(fig);
         stairs(ax, x, uNum, 'o-', 'LineWidth', 1.2, 'MarkerSize', 4, ...
-            'DisplayName', sprintf('有限差分数值解（N=%d）', nIntervals));
+            'DisplayName', sprintf('有限差分数值解（N=%d）', nIntervals), 'Color', '#354E68');
         hold(ax, 'on');
         plot(ax, xDense, uExactDense, '-', 'LineWidth', 1.8, ...
-            'DisplayName', '解析解');
+            'DisplayName', '解析解', 'Color', '#3B9D9A');
         hold(ax, 'off');
         xlabel(ax, 'x'); ylabel(ax, 'u(x)');
         title(ax, sprintf('一维泊松问题：N = %d', nIntervals));
@@ -55,7 +55,7 @@ function runCoreExperiments()
 
     fig = figure('Name', 'Poisson 网格收敛总览', 'Visible', 'off');
     ax = axes(fig); hold(ax, 'on');
-    colorOrder = lines(numel(nIntervalsList));
+    colorOrder = ['#354E68'; '#3B9D9A'; '#9B7D40'; '#80648F'; '#B9674F'; '#89949E'];
     for iGrid = 1:numel(nIntervalsList)
         solution = allSolutions{iGrid};
         stairs(ax, solution.x, solution.uNum, '-', ...
@@ -94,16 +94,18 @@ function runCoreExperiments()
         e = abs(y(:, 1) - yExact(t));
         out{i} = struct('nSteps', nList(i), 't', t, 'yNum', y, ...
             'yExact', yExact(t), 'absError', e, 'meta', meta);
-        plot(t, y(:, 1), 'o-', ...
+        plot(t, y(:, 1), 'o-', 'Color', colorOrder(i, :), ...
             'DisplayName', sprintf('RK4 N = %d', nList(i)));
     end
     hold off;
-    xlabel('t'); ylabel('y(t)'); title('第16题：RK4数值解与解析解');
-    legend('Location', 'best'); applyFigureStyle(gca);
+    xlabel('t'); ylabel('y(t)'); 
+    title('第16题：RK4数值解与解析解');
+    legend('Location', 'best'); 
+    applyFigureStyle(gca);
     nexttile;
     hold on;
     for i = 1:numel(out)
-        semilogy(out{i}.t, max(out{i}.absError, eps), ...
+        semilogy(out{i}.t, max(out{i}.absError, eps), 'Color', colorOrder(i, :), ...
             'DisplayName', sprintf('N = %d', out{i}.nSteps));
     end
     hold off;
